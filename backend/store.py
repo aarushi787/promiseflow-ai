@@ -1,14 +1,11 @@
-"""SQLite unit of work with atomic revisions and immutable schedule snapshots."""
+"""Database unit of work with atomic revisions and immutable schedule snapshots."""
 
 import hashlib
 import json
-import os
 import secrets
-import sqlite3
-from contextlib import contextmanager
 from datetime import datetime, timezone
-from pathlib import Path
 from .models import Factory
+from .database import Database
 
 TABLES = (
     "customers",
@@ -36,45 +33,13 @@ class Conflict(Exception):
 
 
 class Store:
-    def __init__(self, path=None):
-        self.path = str(path or os.environ.get("PROMISEFLOW_DB", "data/promiseflow.db"))
-        Path(self.path).parent.mkdir(parents=True, exist_ok=True)
-        with self.connect() as db:
-            db.executescript("""
-            CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS entities (kind TEXT NOT NULL, id TEXT NOT NULL, body TEXT NOT NULL, PRIMARY KEY(kind,id));
-            CREATE TABLE IF NOT EXISTS versions (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL, created_by TEXT NOT NULL, reason TEXT NOT NULL, base_id INTEGER, revision INTEGER NOT NULL, result TEXT NOT NULL, inputs TEXT NOT NULL, approved_by TEXT, activated_at TEXT);
-            CREATE TABLE IF NOT EXISTS audit (id INTEGER PRIMARY KEY, at TEXT NOT NULL, actor TEXT NOT NULL, action TEXT NOT NULL, detail TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, role TEXT NOT NULL, password TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS sessions (hash TEXT PRIMARY KEY, username TEXT NOT NULL, expires REAL NOT NULL);
-            CREATE TABLE IF NOT EXISTS imports (id TEXT PRIMARY KEY, actor TEXT NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL, created_at TEXT NOT NULL, consumed INTEGER NOT NULL DEFAULT 0);
-            CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, created_at TEXT NOT NULL, actor TEXT NOT NULL, version_id INTEGER NOT NULL, body TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS solve_cache (fingerprint TEXT PRIMARY KEY, created_at TEXT NOT NULL, result TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS decisions (id INTEGER PRIMARY KEY, version_id INTEGER NOT NULL, actor TEXT NOT NULL, at TEXT NOT NULL, action TEXT NOT NULL, reason TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS import_backups (import_id TEXT PRIMARY KEY, before_data TEXT NOT NULL, applied_revision INTEGER NOT NULL, restored INTEGER NOT NULL DEFAULT 0);
-            CREATE TABLE IF NOT EXISTS solve_jobs (id TEXT PRIMARY KEY, actor TEXT NOT NULL, kind TEXT NOT NULL, payload TEXT NOT NULL, status TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, revision INTEGER NOT NULL, result TEXT, error TEXT);
-            CREATE TABLE IF NOT EXISTS actual_events (id INTEGER PRIMARY KEY, request_id TEXT NOT NULL UNIQUE, actor TEXT NOT NULL, recorded_at TEXT NOT NULL, order_id TEXT NOT NULL, body TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS execution_closures (order_id TEXT PRIMARY KEY, actor TEXT NOT NULL, at TEXT NOT NULL, reason TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS actual_corrections (event_id INTEGER PRIMARY KEY REFERENCES actual_events(id), actor TEXT NOT NULL, at TEXT NOT NULL, reason TEXT NOT NULL);
-            """)
-            db.execute("INSERT OR IGNORE INTO meta VALUES ('revision','0')")
-            db.execute("INSERT OR IGNORE INTO meta VALUES ('active','0')")
-            db.execute("INSERT OR REPLACE INTO meta VALUES ('schema_version','4')")
+    def __init__(self, path=None, *, schema=None):
+        self.database = Database(path, schema=schema)
+        self.path = self.database.path
+        self.database.initialize()
 
-    @contextmanager
     def connect(self):
-        db = sqlite3.connect(self.path, timeout=30)
-        db.row_factory = sqlite3.Row
-        db.execute("PRAGMA foreign_keys=ON")
-        db.execute("PRAGMA journal_mode=WAL")
-        try:
-            yield db
-            db.commit()
-        except Exception:
-            db.rollback()
-            raise
-        finally:
-            db.close()
+        return self.database.connect()
 
     def audit(self, db, actor, action, detail):
         db.execute(
@@ -142,11 +107,11 @@ class Store:
                 ],
             )
         db.execute(
-            "INSERT OR REPLACE INTO meta VALUES ('settings',?)",
+            "INSERT INTO meta VALUES ('settings',?) ON CONFLICT (key) DO UPDATE SET value=excluded.value",
             (factory.settings.model_dump_json(),),
         )
         db.execute(
-            "UPDATE meta SET value=CAST(value AS INTEGER)+1 WHERE key='revision'"
+            "UPDATE meta SET value=CAST(CAST(value AS INTEGER)+1 AS TEXT) WHERE key='revision'"
         )
 
     def save_factory(self, factory, revision, actor, reason):
@@ -188,7 +153,7 @@ class Store:
 
             assert_reconciled(db)
             cur = db.execute(
-                "INSERT INTO versions(created_at,created_by,reason,base_id,revision,result,inputs) VALUES (?,?,?,?,?,?,?)",
+                "INSERT INTO versions(created_at,created_by,reason,base_id,revision,result,inputs) VALUES (?,?,?,?,?,?,?) RETURNING id",
                 (
                     now(),
                     actor,
@@ -199,7 +164,7 @@ class Store:
                     factory.model_dump_json(),
                 ),
             )
-            vid = cur.lastrowid
+            vid = cur.fetchone()[0]
             if event:
                 db.execute(
                     "INSERT INTO events VALUES (?,?,?,?,?)",

@@ -72,3 +72,7 @@ HTTP 401 means no valid session; 403 means role/origin denied; 409 means stale/r
 ## V3.1 execution increment
 
 `backend/execution.py` adds the actual-event state machine, revision-aware idempotent recording, manager corrections and transactional whole-order reconciliation. SQLite schema marker 4 adds `actual_events`, `actual_corrections` and `execution_closures`; published versions remain immutable. Store-level gates prevent master replacement and publication while actuals need reconciliation. The solver and independent validator enforce the reconciled `planning_not_before` timestamp. Read [EXECUTION.md](EXECUTION.md) for the exact workflow and partial-work limitations.
+
+## V3.2 database adapter
+
+`backend/database.py` selects SQLite or server-side PostgreSQL through `PROMISEFLOW_DATABASE_URL`. The canonical factory and Store API stay unchanged. PostgreSQL uses a private RLS-enabled schema, native transactions, generated IDs, parameter binding and advisory locks for revision-sensitive writes. `backend/db_admin.py` checks the configured connection and performs an optional transactional SQLite cutover. See [SUPABASE.md](SUPABASE.md) for credentials, deployment, migration and single-worker limits.

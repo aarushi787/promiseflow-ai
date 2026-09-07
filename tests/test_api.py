@@ -6,15 +6,15 @@ from backend.store import Store, Conflict
 
 
 @pytest.fixture
-def client(tmp_path, factory, base):
-    path = tmp_path / "test.db"
-    store = Store(path)
+def client(storage_target, factory, base):
+    path, schema = storage_target
+    store = Store(path, schema=schema)
     store.save_factory(factory, 0, "test", "Initialize")
     result = CpSatProvider().solve(factory, base)
     vid = store.save_version(factory, result, 1, None, "test", "Baseline")
     store.activate(vid, "test")
     login_attempts.clear()
-    with TestClient(create_app(path)) as client:
+    with TestClient(create_app(path, db_schema=schema)) as client:
         yield client
 
 

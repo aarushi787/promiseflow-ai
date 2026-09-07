@@ -1,5 +1,7 @@
 # PromiseFlow AI
 
+Supabase PostgreSQL backend setup and login details: [Supabase connection guide](docs/SUPABASE.md). Local SQLite remains available for development; live Supabase access requires a server-only connection string.
+
 **Know whether a commitment is achievable before you make it.**
 
 ## V3 decision-intelligence update

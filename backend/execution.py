@@ -284,23 +284,24 @@ def record(store, body, actor, role):
                 ):
                     raise ValueError(f"{key} is occupied by other running work")
         cur = db.execute(
-            "INSERT INTO actual_events(request_id,actor,recorded_at,order_id,body) VALUES (?,?,?,?,?)",
+            "INSERT INTO actual_events(request_id,actor,recorded_at,order_id,body) VALUES (?,?,?,?,?) RETURNING id",
             (body.request_id, actor, now(), op["order_id"], body.model_dump_json()),
         )
+        event_id = cur.fetchone()[0]
         db.execute(
-            "UPDATE meta SET value=CAST(value AS INTEGER)+1 WHERE key='revision'"
+            "UPDATE meta SET value=CAST(CAST(value AS INTEGER)+1 AS TEXT) WHERE key='revision'"
         )
         store.audit(
             db,
             actor,
             "Recorded production actual",
             {
-                "event_id": cur.lastrowid,
+                "event_id": event_id,
                 "operation": body.operation_id,
                 "kind": body.kind,
             },
         )
-        return {"ok": True, "event_id": cur.lastrowid, "replayed": False}
+        return {"ok": True, "event_id": event_id, "replayed": False}
 
 
 def reconcile(store, body, actor):
@@ -394,7 +395,7 @@ def correct(store, event_id, body, actor):
             (event_id, actor, now(), body.reason),
         )
         db.execute(
-            "UPDATE meta SET value=CAST(value AS INTEGER)+1 WHERE key='revision'"
+            "UPDATE meta SET value=CAST(CAST(value AS INTEGER)+1 AS TEXT) WHERE key='revision'"
         )
         store.audit(
             db,

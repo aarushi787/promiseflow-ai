@@ -44,7 +44,7 @@ def cached_solve(store, provider, factory, base, **kwargs):
     if result["solver_status"] in ("FEASIBLE", "OPTIMAL"):
         with store.connect() as db:
             db.execute(
-                "INSERT OR REPLACE INTO solve_cache VALUES (?,?,?)",
+                "INSERT INTO solve_cache VALUES (?,?,?) ON CONFLICT (fingerprint) DO UPDATE SET created_at=excluded.created_at, result=excluded.result",
                 (key, result["cache"]["solved_at"], json.dumps(result, default=str)),
             )
             db.execute(

@@ -36,6 +36,7 @@ from .intelligence import (
     resource_load,
 )
 from .store import Store, Conflict, password_hash, password_matches, now, dumps
+from .database import DatabaseUnavailable
 from .scenarios import Scenario, apply_scenario
 from .imports import template, preview, safe_cell
 from .execution import (
@@ -88,8 +89,8 @@ def planning_epoch(factory, active):
     )
 
 
-def create_app(db_path=None):
-    store = Store(db_path)
+def create_app(db_path=None, *, db_schema=None):
+    store = Store(db_path, schema=db_schema)
     jobs = Jobs(store)
 
     def evaluate(factory, base, **kwargs):
@@ -129,7 +130,7 @@ def create_app(db_path=None):
                     "A demo or unclassified database cannot run in production. Use a new production database and validated imports."
                 )
             db.execute(
-                "INSERT OR IGNORE INTO meta VALUES ('mode',?)",
+                "INSERT INTO meta VALUES ('mode',?) ON CONFLICT (key) DO NOTHING",
                 ("demo" if DEMO else "production",),
             )
             for role in (ROLES if DEMO else ["admin"]):
@@ -184,7 +185,7 @@ def create_app(db_path=None):
         yield
         jobs.executor.shutdown(wait=True, cancel_futures=True)
 
-    app = FastAPI(title="PromiseFlow AI", version="3.1.0", lifespan=lifespan)
+    app = FastAPI(title="PromiseFlow AI", version="3.2.0", lifespan=lifespan)
     app.state.store = store
 
     @app.middleware("http")
@@ -214,6 +215,10 @@ def create_app(db_path=None):
     async def conflict(request, exc):
         return JSONResponse({"detail": str(exc)}, status_code=409)
 
+    @app.exception_handler(DatabaseUnavailable)
+    async def unavailable(request, exc):
+        return JSONResponse({"detail": str(exc)}, status_code=503)
+
     @app.exception_handler(ValueError)
     async def invalid(request, exc):
         return JSONResponse({"detail": str(exc)}, status_code=422)
@@ -239,7 +244,14 @@ def create_app(db_path=None):
 
     @app.get("/api/health")
     def health():
-        return {"status": "ok", "demo": DEMO, "version": "3.1.0"}
+        with store.connect() as db:
+            db.execute("SELECT 1").fetchone()
+        return {
+            "status": "ok",
+            "demo": DEMO,
+            "version": "3.2.0",
+            "database": "postgresql" if store.database.postgres else "sqlite",
+        }
 
     @app.post("/api/login")
     def login(body: Login, request: Request, response: Response):

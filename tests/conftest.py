@@ -1,6 +1,34 @@
 from datetime import datetime
 import pytest
 from backend.models import Factory
+import os
+from uuid import uuid4
+from urllib.parse import urlsplit
+
+
+@pytest.fixture
+def storage_target(tmp_path):
+    url = os.environ.get("PROMISEFLOW_TEST_POSTGRES_URL")
+    if not url:
+        yield tmp_path / "test.db", None
+        return
+    if urlsplit(url).hostname not in ("localhost", "127.0.0.1", "::1"):
+        raise ValueError(
+            "Integration tests require a disposable local PostgreSQL server"
+        )
+    import psycopg
+    from psycopg import sql
+
+    schema = "pf_test_" + uuid4().hex
+    try:
+        yield url, schema
+    finally:
+        with psycopg.connect(url) as db:
+            db.execute(
+                sql.SQL("DROP SCHEMA IF EXISTS {} CASCADE").format(
+                    sql.Identifier(schema)
+                )
+            )
 
 
 @pytest.fixture
