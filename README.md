@@ -14,7 +14,7 @@ Read the [V3 audit](docs/V3_AUDIT.md), [implementation report](docs/V3_IMPLEMENT
 
 A working manufacturing planning MVP for MCCIA AI Applied Studio. It checks delivery promises against a finite-capacity production model, explores recovery scenarios, and requires explicit approval to activate a new schedule.
 
-The schedule comes from **Google OR-Tools CP-SAT**, never a language model. The application includes a React/TypeScript interface, a FastAPI service, SQLite persistence, realistic synthetic factory data, downloadable Excel templates, and automated constraint/API tests.
+The schedule comes from **Google OR-Tools CP-SAT**, never a language model. The application includes a React/TypeScript interface, a FastAPI service, SQLite or private PostgreSQL persistence, realistic synthetic factory data, downloadable Excel templates, and automated constraint/API tests.
 
 ## Run locally on Windows
 
@@ -68,7 +68,7 @@ Settings includes calendars, tools, operator crews, customers, suppliers, weight
 
 SQLite uses WAL, transactional writes and optimistic revisions. Master entities have unique `(kind,id)` keys and typed cross-reference validation. Schedule versions store immutable factory inputs, solver settings, complete results, parent version, author and reason. Approval metadata is added once; older versions remain available. A proposal can activate only when its source data revision and active parent still match.
 
-Master edits and imports do **not** overwrite the active schedule. The approved result always retains its original inputs. This is a single-plant, single-tenant application; SQLite plus one API worker is the deployment scope of this MVP.
+Master edits and imports do **not** overwrite the active schedule. The approved result always retains its original inputs. This is a single-plant, single-tenant application; SQLite or private PostgreSQL plus one API worker is the deployment scope of this MVP.
 
 ## Verification
 

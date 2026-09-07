@@ -1,17 +1,17 @@
 # Deployment and operations
 
-V3 adds `compose.yaml`, an online backup command and persisted background planning statuses. Read [ON_PREMISE](ON_PREMISE.md) for current setup and restore instructions. Both directions of demo/production mode mismatch are rejected. The former no-background-queue limitation below is superseded by a bounded single-process worker, not a distributed queue. Schema additions are idempotent at version 3.
+V3 adds `compose.yaml`, an online backup command and persisted background planning statuses. Read [ON_PREMISE](ON_PREMISE.md) for current setup and restore instructions. Both directions of demo/production mode mismatch are rejected. The former no-background-queue limitation below is superseded by a bounded single-process worker, not a distributed queue. Schema additions are idempotent at version 4. V3.2 adds private PostgreSQL storage; see [Supabase setup](SUPABASE.md).
 
 ## Local evaluation
 
 Use the README setup steps and `start.ps1`. Bind to 127.0.0.1. The sample factory, orders, stock, customers and suppliers are synthetic; timestamps are relative to first initialization. The approved plan has a fixed planning epoch for reproducible demonstrations.
 
-The `.env.example` documents environment variables; the process does not automatically load `.env`. Set variables in your shell, container or service manager.
+The backend loads the repository-root `.env` without overriding existing deployment environment variables. Use `.env.example` as a template; keep credentials out of source control.
 
 ## Production-mode pilot
 
 1. Use a new persistent database path. Demo databases are explicitly rejected in production mode.
-2. Set `PROMISEFLOW_MODE=production`, `PROMISEFLOW_DB` and a unique `PROMISEFLOW_ADMIN_PASSWORD` of at least 16 characters before the first start.
+2. Set `PROMISEFLOW_MODE=production`, `PROMISEFLOW_DB` (SQLite) or `PROMISEFLOW_DATABASE_URL` (PostgreSQL), and a unique `PROMISEFLOW_ADMIN_PASSWORD` of at least 16 characters before the first start.
 3. Terminate HTTPS at a reverse proxy. Set `PROMISEFLOW_ORIGINS` to exact comma-separated HTTPS origins. Secure session cookies will not work over plain HTTP in production.
 4. Run one Python service worker. Keep the service private to the plant network or an authenticated network boundary. Apply a reverse-proxy upload/request limit, request timeout suitable for optimization, and rate limits.
 5. Production initializes an empty factory and one admin account. Sign in with username `admin`. Set up calendars, customers, suppliers, qualified resources, routings, products, materials and orders in that dependency order. Templates contain examples only when corresponding records exist.
@@ -27,7 +27,7 @@ The included Dockerfile builds the frontend and Python service, runs as a non-ro
 - Monitor `/api/health`, request error rate, solver statuses, queue/busy responses, disk space and backup age. A healthy HTTP process does not certify factory-data accuracy.
 - Pin dependency versions through `requirements.txt` and `frontend/package-lock.json`. Run tests before dependency upgrades. Record the solver version when comparing reproduced schedules.
 - Build the frontend before launching the single-server deployment. Static assets are discovered at startup; restart after a new build.
-- Schema initialization is idempotent for version 0.1. Future schema migrations must be explicit and backed up; there is no full migration framework yet.
+- Schema initialization is idempotent at version 4. Future schema migrations must be explicit and backed up; there is no full migration framework yet.
 
 ## Acceptance gate before real customer promises
 
@@ -35,4 +35,4 @@ Validate cycle/setup times and units, resource capability, operator/tool capacit
 
 ## Current deployment boundaries
 
-One plant and one timezone per database, one API worker, local disk persistence. No SSO/MFA, tenant isolation, HA/failover, background job queue, password-recovery UI or external notifications. These are rollout requirements to assess, not capabilities claimed by this MVP. Sites/Cloudflare Workers cannot host the Python CP-SAT dependency; use a compatible Python server/container.
+One plant and one timezone per database, one API worker, SQLite or private PostgreSQL persistence. No SSO/MFA, tenant isolation, application HA/failover, distributed job queue, password-recovery UI or external notifications. These are rollout requirements to assess, not capabilities claimed by this MVP. Sites/Cloudflare Workers cannot host the Python CP-SAT dependency; use a compatible Python server/container.
