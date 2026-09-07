@@ -1,0 +1,12 @@
+{
+  "name": "promiseflow-ai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "test": "node scripts/python.mjs -m pytest -q",
+    "start": "node scripts/python.mjs -m uvicorn backend.app:app --host 127.0.0.1 --port 8017"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "synthetic": true,
+  "runs": [
+    {
+      "orders": 50,
+      "operations": 200,
+      "resources": 10,
+      "elapsed_seconds": 2.785,
+      "status": "FEASIBLE",
+      "validated": true,
+      "scheduled": 200,
+      "solver_seconds": 2.675
+    },
+    {
+      "orders": 500,
+      "operations": 2500,
+      "resources": 50,
+      "elapsed_seconds": 0.004,
+      "status": "REJECTED_SCOPE",
+      "reason": "MVP limit: 1,200 batch operations per solve. Increase product batch size or reduce planning scope."
+    },
+    {
+      "orders": 2000,
+      "operations": 10000,
+      "resources": 150,
+      "elapsed_seconds": 0.02,
+      "status": "REJECTED_SCOPE",
+      "reason": "MVP limit: 1,200 batch operations per solve. Increase product batch size or reduce planning scope."
+    }
+  ]
+}

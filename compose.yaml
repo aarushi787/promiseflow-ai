@@ -1,0 +1,21 @@
+services:
+  promiseflow:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8017:8017"
+    environment:
+      PROMISEFLOW_MODE: production
+      PROMISEFLOW_DB: /app/data/promiseflow.db
+      PROMISEFLOW_ADMIN_PASSWORD: ${PROMISEFLOW_ADMIN_PASSWORD:?Set a unique bootstrap password of at least 16 characters}
+      PROMISEFLOW_ORIGINS: ${PROMISEFLOW_ORIGINS:?Set the exact HTTPS origin}
+    volumes:
+      - factory_data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp
+volumes:
+  factory_data:

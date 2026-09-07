@@ -1,0 +1,7 @@
+fastapi==0.136.3
+uvicorn==0.51.0
+ortools==9.15.6755
+openpyxl==3.1.5
+python-multipart==0.0.32
+httpx==0.28.1
+pytest==9.1.1
