@@ -22,15 +22,36 @@ export async function api(
   path: string,
   options: RequestInit = {},
 ): Promise<any> {
-  const res = await fetch("/api" + path, {
-    credentials: "same-origin",
-    ...options,
-    headers:
-      options.body instanceof FormData
-        ? options.headers
-        : { "Content-Type": "application/json", ...options.headers },
-  });
-  const data = await res.json();
+  let res: Response;
+  try {
+    res = await fetch("/api" + path, {
+      credentials: "same-origin",
+      ...options,
+      headers:
+        options.body instanceof FormData
+          ? options.headers
+          : { "Content-Type": "application/json", ...options.headers },
+    });
+  } catch {
+    throw new Error(
+      "Cannot reach the planning server. Check your connection and try again.",
+    );
+  }
+  if (res.status === 204) return null;
+  const contentType = res.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      "The planning server is unavailable at this address. Please open the workspace served by the PromiseFlow backend or contact your administrator.",
+    );
+  }
+  let data: any;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(
+      "The planning server returned an invalid response. Please try again.",
+    );
+  }
   if (!res.ok)
     throw new Error(
       typeof data.detail === "string"
