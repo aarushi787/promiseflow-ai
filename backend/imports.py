@@ -206,7 +206,7 @@ def template(kind, factory):
         )
     notes = wb.create_sheet("Instructions")
     for line in [
-        "PromiseFlow AI · import template",
+        "ProductionSaathi · import template",
         "Replace example rows with your data. Keep column names unchanged.",
         "IDs link to existing master records. Preview before applying.",
         "All dates use plant-local time: YYYY-MM-DDTHH:MM:SS.",

@@ -1,4 +1,4 @@
-# PromiseFlow AI V3 — implementation report
+# ProductionSaathi V3 — implementation report
 
 Verified 6 September 2026. This release improves the existing application into a decision-oriented pilot MVP. It does not claim all 183 roadmap sections or unattended plant readiness.
 

@@ -137,7 +137,7 @@ export default function App() {
     return (
       <div className="boot">
         <span className="brand-symbol">
-          u<span />
+          p<span />
         </span>
         <h2>Opening your planning workspace</h2>
         <p>Loading the approved production plan…</p>
@@ -200,10 +200,10 @@ export default function App() {
           }}
         >
           <span className="brand-symbol">
-            u<span />
+            p<span />
           </span>
           <span>
-            UdyamPlan
+            ProductionSaathi
           </span>
         </a>
         <div className="workspace">
@@ -548,7 +548,7 @@ export default function App() {
           )}
           <footer className="page-footer">
             <span>
-              Know what you can deliver. Commit with confidence.
+              Plan production. Deliver with confidence.
             </span>
             <span>
               <ShieldCheck size={13} />
@@ -631,16 +631,16 @@ function Login({
       <div className="login-story">
         <div className="brand">
           <span className="brand-symbol">
-            u<span />
+            p<span />
           </span>
-          UdyamPlan
+          ProductionSaathi
         </div>
         <div>
           <span className="eyebrow">An MCCIA AI Applied Studio application</span>
           <h1>
-            Know what you can deliver.
+            Plan production.
             <br />
-            <em>Commit with confidence.</em>
+            <em>Deliver with confidence.</em>
           </h1>
           <p>Production planning grounded in the realities of your factory.</p>
           <div className="login-proof">

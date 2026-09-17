@@ -671,7 +671,7 @@ export function Imports({
         })}
       </div>
       <Panel
-        title="Bring your factory data into UdyamPlan"
+        title="Bring your factory data into ProductionSaathi"
         sub="Excel (.xlsx) and UTF-8 CSV · Up to 5 MB or 2,000 rows"
       >
         <div className="import-body">

@@ -7,7 +7,7 @@ from .store import Store, password_hash
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Create a named PromiseFlow user in the configured database"
+        description="Create a named ProductionSaathi user in the configured database"
     )
     parser.add_argument("username")
     parser.add_argument(

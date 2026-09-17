@@ -1,6 +1,6 @@
 # Local operation without Supabase
 
-PromiseFlow runs on one computer with FastAPI serving both the interface and API. SQLite stores data on that computer. No Supabase account or API key is required.
+ProductionSaathi runs on one computer with FastAPI serving both the interface and API. SQLite stores data on that computer. No Supabase account or API key is required.
 
 ## First setup on Windows
 

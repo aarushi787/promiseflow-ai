@@ -1,10 +1,10 @@
-# UdyamPlan
+# ProductionSaathi
 
 Run locally without Supabase using SQLite: [local operation guide](docs/LOCAL.md). PostgreSQL is optional: [Supabase connection guide](docs/SUPABASE.md).
 
 *An MCCIA AI Applied Studio application*
 
-**Know what you can deliver. Commit with confidence.**
+**Plan production. Deliver with confidence.**
 
 ## V3 decision-intelligence update
 

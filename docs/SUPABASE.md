@@ -1,6 +1,6 @@
 # Supabase database connection
 
-PromiseFlow's FastAPI backend supports Supabase PostgreSQL. The React app continues to call FastAPI; it receives no database URL, password, service-role key or direct table permissions. Supabase Auth is not enabled by this change: existing PromiseFlow usernames, password hashes, sessions and role checks remain authoritative.
+ProductionSaathi's FastAPI backend supports Supabase PostgreSQL. The React app continues to call FastAPI; it receives no database URL, password, service-role key or direct table permissions. Supabase Auth is not enabled by this change: existing ProductionSaathi usernames, password hashes, sessions and role checks remain authoritative.
 
 ## Login IDs
 
