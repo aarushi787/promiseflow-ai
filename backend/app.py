@@ -185,7 +185,7 @@ def create_app(db_path=None, *, db_schema=None):
         yield
         jobs.executor.shutdown(wait=True, cancel_futures=True)
 
-    app = FastAPI(title="PromiseFlow AI", version="3.2.0", lifespan=lifespan)
+    app = FastAPI(title="UdyamPlan", version="3.2.0", lifespan=lifespan)
     app.state.store = store
 
     @app.middleware("http")

@@ -137,7 +137,7 @@ export default function App() {
     return (
       <div className="boot">
         <span className="brand-symbol">
-          p<span />
+          u<span />
         </span>
         <h2>Opening your planning workspace</h2>
         <p>Loading the approved production plan…</p>
@@ -200,10 +200,10 @@ export default function App() {
           }}
         >
           <span className="brand-symbol">
-            p<span />
+            u<span />
           </span>
           <span>
-            PromiseFlow<span className="brand-ai">AI</span>
+            UdyamPlan
           </span>
         </a>
         <div className="workspace">
@@ -548,7 +548,7 @@ export default function App() {
           )}
           <footer className="page-footer">
             <span>
-              Know whether a commitment is achievable before you make it.
+              Know what you can deliver. Commit with confidence.
             </span>
             <span>
               <ShieldCheck size={13} />
@@ -631,18 +631,16 @@ function Login({
       <div className="login-story">
         <div className="brand">
           <span className="brand-symbol">
-            p<span />
+            u<span />
           </span>
-          PromiseFlow <span className="brand-ai">AI</span>
+          UdyamPlan
         </div>
         <div>
-          <span className="eyebrow">MCCIA AI APPLIED STUDIO</span>
+          <span className="eyebrow">An MCCIA AI Applied Studio application</span>
           <h1>
-            Promise what
+            Know what you can deliver.
             <br />
-            you can deliver.
-            <br />
-            <em>Then deliver it.</em>
+            <em>Commit with confidence.</em>
           </h1>
           <p>Production planning grounded in the realities of your factory.</p>
           <div className="login-proof">

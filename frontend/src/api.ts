@@ -41,7 +41,7 @@ export async function api(
   const contentType = res.headers.get("content-type") || "";
   if (!contentType.includes("application/json")) {
     throw new Error(
-      "The planning server is unavailable at this address. Please open the workspace served by the PromiseFlow backend or contact your administrator.",
+      "The planning server is unavailable at this address. Please open the workspace served by the UdyamPlan backend or contact your administrator.",
     );
   }
   let data: any;

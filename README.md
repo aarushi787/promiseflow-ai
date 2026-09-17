@@ -1,8 +1,10 @@
-# PromiseFlow AI
+# UdyamPlan
 
 Run locally without Supabase using SQLite: [local operation guide](docs/LOCAL.md). PostgreSQL is optional: [Supabase connection guide](docs/SUPABASE.md).
 
-**Know whether a commitment is achievable before you make it.**
+*An MCCIA AI Applied Studio application*
+
+**Know what you can deliver. Commit with confidence.**
 
 ## V3 decision-intelligence update
 
