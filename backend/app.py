@@ -192,10 +192,14 @@ def create_app(db_path=None, *, db_schema=None):
     async def security(request, call_next):
         if request.method not in ("GET", "HEAD", "OPTIONS"):
             origin = request.headers.get("origin")
-            allowed = os.environ.get(
-                "PROMISEFLOW_ORIGINS",
-                "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8017,http://127.0.0.1:8017",
-            ).split(",")
+            allowed = [
+                origin.strip()
+                for origin in os.environ.get(
+                    "PROMISEFLOW_ORIGINS",
+                    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8017,http://127.0.0.1:8017,https://productionsaathi.vercel.app,https://promise-flow-ai.vercel.app",
+                ).split(",")
+                if origin.strip()
+            ]
             if origin and origin not in allowed:
                 return JSONResponse(
                     {"detail": "Origin is not allowed"}, status_code=403

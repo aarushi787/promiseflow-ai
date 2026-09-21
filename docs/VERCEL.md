@@ -9,7 +9,7 @@ For the MCCIA deployment, verify these server environment settings and redeploy 
 - `PROMISEFLOW_DATABASE_URL`: the chosen Supabase project's **session pooler** PostgreSQL URI, including its correct database password and `sslmode=verify-full`. A public API key cannot substitute for this URI.
 - `PROMISEFLOW_DB_SSLROOTCERT=backend/certs/supabase-ca.crt`. Relative certificate paths resolve against the application root. If this variable is absent, Supabase endpoints use the bundled CA automatically. An explicitly configured missing file is rejected, not silently ignored.
 - `PROMISEFLOW_MODE=demo` for the previously migrated synthetic factory. Use a separate database/schema for production.
-- `PROMISEFLOW_ORIGINS=https://promise-flow-ai.vercel.app` for the new MCCIA address.
+- `PROMISEFLOW_ORIGINS=https://productionsaathi.vercel.app,https://promise-flow-ai.vercel.app` for the production / demo domains.
 
 Git pushes transfer source code, not the old Vercel project's environment variables. Do not upload `.env` to GitHub. A successful redeployment must be followed by a PostgreSQL `/api/health` response and an actual login check.
 
