@@ -1,20 +1,34 @@
 import type { CSSProperties } from "react";
+import { BrandIcon, BrandLogo } from "./BrandLogo";
+
+export { BrandIcon, BrandLogo };
 
 interface McciaLogoProps {
   className?: string;
   height?: number | string;
   alt?: string;
   style?: CSSProperties;
+  variant?: "brand" | "mccia" | "icon";
   inverted?: boolean;
 }
 
+/**
+ * Universal logo component supporting both crisp SVG PromiseFlow brand icon
+ * and clean MCCIA partner emblem.
+ */
 export function McciaLogo({
   className = "",
   height = 28,
-  alt = "MCCIA - Mahratta Chamber of Commerce, Industries and Agriculture",
+  alt = "MCCIA Manufacturing Intelligence",
   style = {},
+  variant = "brand",
 }: McciaLogoProps) {
-  const numericHeight = typeof height === "number" ? height : parseInt(String(height), 10) || 28;
+  const numericHeight =
+    typeof height === "number" ? height : parseInt(String(height), 10) || 28;
+
+  if (variant === "brand") {
+    return <BrandIcon size={numericHeight + 6} className={className} />;
+  }
 
   return (
     <img
@@ -31,7 +45,6 @@ export function McciaLogo({
         ...style,
       }}
       onError={(e) => {
-        // Fallback to SVG asset if PNG fails
         const target = e.currentTarget as HTMLImageElement;
         if (!target.src.endsWith("mccia-logo.svg")) {
           target.src = "/mccia-logo.svg";
@@ -42,34 +55,7 @@ export function McciaLogo({
 }
 
 export function McciaMark({ size = 32 }: { size?: number }) {
-  return (
-    <span
-      className="mccia-mark-badge"
-      style={{
-        width: size,
-        height: size,
-        borderRadius: Math.round(size * 0.22),
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#FFFFFF",
-        padding: Math.max(2, Math.round(size * 0.1)),
-        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.12)",
-        flexShrink: 0,
-        overflow: "hidden",
-      }}
-    >
-      <img
-        src="/mccia-logo.png"
-        alt="MCCIA"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-        }}
-      />
-    </span>
-  );
+  return <BrandIcon size={size} />;
 }
 
 export default McciaLogo;

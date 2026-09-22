@@ -32,7 +32,7 @@ import { Dashboard, Bottlenecks, Gantt, OperationsTable } from "./planning";
 import { PromiseChecker, Simulator, Versions } from "./decisions";
 import { Orders, MasterData, Reports, Imports, Settings } from "./masters";
 import { ShopFloor } from "./execution";
-import { McciaLogo } from "./McciaLogo";
+import { BrandLogo, BrandIcon } from "./BrandLogo";
 import "./App.css";
 
 const navigation = [
@@ -146,8 +146,8 @@ export default function App() {
   if (loading)
     return (
       <div className="boot">
-        <div className="brand-logo-wrap" style={{ padding: "10px 16px", marginBottom: "16px" }}>
-          <McciaLogo height={36} />
+        <div style={{ marginBottom: "18px" }}>
+          <BrandIcon size={48} />
         </div>
         <h2>Opening your planning workspace</h2>
         <p>Loading the approved production plan…</p>
@@ -215,10 +215,12 @@ export default function App() {
             go("Dashboard");
           }}
         >
-          <div className="brand-logo-wrap">
-            <McciaLogo height={20} />
-          </div>
-          <span className="brand-title">ProductionSaathi</span>
+          <BrandLogo
+            size={34}
+            title="PromiseFlow"
+            subtitle="ProductionSaathi"
+            showAiBadge
+          />
         </a>
         <div className="workspace">
           <div className="workspace-icon">
@@ -656,10 +658,12 @@ function Login({
     <div className="login-page">
       <div className="login-story">
         <div className="brand">
-          <div className="brand-logo-wrap">
-            <McciaLogo height={26} />
-          </div>
-          <span className="brand-title">ProductionSaathi</span>
+          <BrandLogo
+            size={38}
+            title="PromiseFlow"
+            subtitle="MCCIA Manufacturing Intelligence"
+            showAiBadge
+          />
         </div>
         <div>
           <span className="eyebrow">MCCIA AI APPLIED STUDIO</span>
@@ -683,8 +687,8 @@ function Login({
         </span>
       </div>
       <div className="login-form">
-        <div className="login-logo-mccia">
-          <McciaLogo height={34} />
+        <div className="login-logo-brand" style={{ marginBottom: "20px" }}>
+          <BrandIcon size={44} />
         </div>
         <h2>Your planning workspace</h2>
         <p>Sign in to see what your factory can deliver.</p>
