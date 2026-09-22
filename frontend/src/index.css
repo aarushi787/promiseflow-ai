@@ -1,11 +1,31 @@
 :root {
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #243d34;
-  background: #f5f7f6;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif;
+  color: #1e293b;
+  background: #f8fafc;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
+
+  /* MCCIA Brand Design Tokens */
+  --mccia-blue: #0b62ac;
+  --mccia-blue-hover: #084e8d;
+  --mccia-blue-dark: #0a2540;
+  --mccia-blue-surface: #0f2d4d;
+  --mccia-blue-light: #ebf3fc;
+  --mccia-blue-border: #c7def3;
+  --mccia-green: #229e45;
+  --mccia-green-hover: #1a8237;
+  --mccia-green-light: #eaf7ee;
+  --mccia-green-border: #c1eccf;
+  --mccia-green-dark: #11612a;
+
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --border-color: #e2e8f0;
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
 }
 * {
   box-sizing: border-box;
@@ -13,6 +33,8 @@
 body {
   margin: 0;
   min-width: 360px;
+  background-color: var(--bg-page);
+  color: var(--text-main);
 }
 button,
 input,
@@ -47,8 +69,8 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid #47a88a;
-  outline-offset: 3px;
+  outline: 3px solid var(--mccia-blue);
+  outline-offset: 2px;
 }
 button {
   border: 0;
@@ -58,12 +80,19 @@ button {
 input,
 select,
 textarea {
-  border: 1px solid #d6ded9;
-  background: #fff;
-  color: #253e34;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  color: var(--text-main);
   border-radius: 7px;
   padding: 11px 12px;
   max-width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--mccia-blue);
+  box-shadow: 0 0 0 3px rgba(11, 98, 172, 0.12);
 }
 textarea {
   resize: vertical;
@@ -82,9 +111,11 @@ h2 {
   font-size: 17px;
   letter-spacing: -0.3px;
   font-weight: 650;
+  color: var(--text-main);
 }
 h3 {
   font-size: 16px;
+  color: var(--text-main);
 }
 small {
   font-size: 12px;
@@ -93,7 +124,8 @@ svg {
   flex-shrink: 0;
 }
 ::selection {
-  background: #c8e8dc;
+  background: #cbe3f7;
+  color: #0a2540;
 }
 button:hover:not(:disabled) {
   filter: brightness(0.97);

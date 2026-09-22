@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" fill="none" width="100%" height="100%">
+  <!-- MCCIA LOGO: 'mcc' in Blue (#0B62AC), 'ia' in Green (#229E45) -->
+  <g id="mccia-logo">
+    <!-- letter 'm' -->
+    <path d="M 18 36 H 42 V 88 H 26 V 49 H 18 V 88 H 2 V 36 H 18 Z" fill="#0B62AC" />
+    <path d="M 2 88 H 26 V 49 H 42 V 88 H 66 V 36 H 50 V 46 C 47 39 40 36 33 36 C 26 36 21 39 18 45 C 15 39 10 36 2 36 V 88 Z" fill="#0B62AC" style="display:none;" />
+    
+    <!-- Precision Vectorized Geometry for MCCIA -->
+    <!-- 'm' -->
+    <path d="M 12 38 H 36 C 44 38 48 42 50 49 C 53 42 58 38 66 38 H 82 V 88 H 62 V 54 C 62 50 59 48 55 48 C 51 48 48 50 48 54 V 88 H 28 V 54 C 28 50 25 48 21 48 C 17 48 14 50 14 54 V 88 H -4 V 38 H 12 Z" transform="translate(16, 0)" fill="#0B62AC" />
+    
+    <!-- 'c' 1 -->
+    <path d="M 152 38 H 124 C 110 38 102 48 102 63 C 102 78 110 88 124 88 H 152 V 74 H 126 C 122 74 120 70 120 63 C 120 56 122 52 126 52 H 152 V 38 Z" fill="#0B62AC" />
+    
+    <!-- 'c' 2 -->
+    <path d="M 208 38 H 180 C 166 38 158 48 158 63 C 158 78 166 88 180 88 H 208 V 74 H 182 C 178 74 176 70 176 63 C 176 56 178 52 182 52 H 208 V 38 Z" fill="#0B62AC" />
+    
+    <!-- 'i' in Green -->
+    <path d="M 214 38 H 232 V 88 H 214 V 38 Z" fill="#229E45" />
+    
+    <!-- 'a' in Green -->
+    <path d="M 276 38 H 244 C 238 38 234 43 234 50 V 76 C 234 83 238 88 244 88 H 288 L 294 72 H 276 V 76 C 276 77 274 78 272 78 H 252 C 250 78 248 77 248 75 V 67 H 288 V 50 C 288 43 284 38 276 38 Z M 272 56 H 248 V 49 C 248 48 250 47 252 47 H 272 C 274 47 276 48 276 49 V 56 Z" fill="#229E45" />
+    
+    <!-- Registered Symbol (R) -->
+    <g transform="translate(300, 30)">
+      <circle cx="8" cy="8" r="7" stroke="#0B62AC" stroke-width="1.4" fill="none" />
+      <text x="8" y="11" font-size="7.5" font-family="Arial, sans-serif" font-weight="bold" fill="#0B62AC" text-anchor="middle">R</text>
+    </g>
+  </g>
+</svg>

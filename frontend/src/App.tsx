@@ -32,7 +32,9 @@ import { Dashboard, Bottlenecks, Gantt, OperationsTable } from "./planning";
 import { PromiseChecker, Simulator, Versions } from "./decisions";
 import { Orders, MasterData, Reports, Imports, Settings } from "./masters";
 import { ShopFloor } from "./execution";
+import { McciaLogo } from "./McciaLogo";
 import "./App.css";
+
 const navigation = [
   {
     group: "WORKSPACE",
@@ -71,6 +73,7 @@ const navigation = [
     ],
   },
 ] as const;
+
 const descriptions: Record<string, string> = {
   Dashboard: "A clear view of your factory’s delivery commitments.",
   Orders: "Every customer commitment, connected to a feasible plan.",
@@ -89,6 +92,7 @@ const descriptions: Record<string, string> = {
   Imports: "Start with the spreadsheets you already use.",
   Settings: "Your factory, calendars and planning priorities.",
 };
+
 export default function App() {
   const [session, setSession] = useState<Row | null>(null),
     [data, setData] = useState<Data | null>(null),
@@ -100,7 +104,9 @@ export default function App() {
     [mobile, setMobile] = useState(false),
     [proposal, setProposal] = useState<Row | null>(null),
     [inspect, setInspect] = useState<Row | null>(null);
+
   const refresh = async () => setData(await api("/factory"));
+
   useEffect(() => {
     api("/me")
       .then(async (s) => {
@@ -112,11 +118,13 @@ export default function App() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
   useEffect(() => {
     if (!notice) return;
     const id = setTimeout(() => setNotice(""), 6000);
     return () => clearTimeout(id);
   }, [notice]);
+
   const run: Run = async (label, fn) => {
     setBusy(label);
     setError("");
@@ -128,21 +136,24 @@ export default function App() {
       setBusy("");
     }
   };
+
   const go = (p: string) => {
     setPage(p);
     setMobile(false);
     setError("");
   };
+
   if (loading)
     return (
       <div className="boot">
-        <span className="brand-symbol">
-          p<span />
-        </span>
+        <div className="brand-logo-wrap" style={{ padding: "10px 16px", marginBottom: "16px" }}>
+          <McciaLogo height={36} />
+        </div>
         <h2>Opening your planning workspace</h2>
         <p>Loading the approved production plan…</p>
       </div>
     );
+
   if (!session)
     return (
       <Login
@@ -162,6 +173,7 @@ export default function App() {
         }
       />
     );
+
   const f = data?.factory,
     plan = data?.plan,
     canWrite = ["planner", "manager", "admin"].includes(session.role),
@@ -169,14 +181,17 @@ export default function App() {
     canPromise = canWrite || session.role === "sales",
     canSimulate =
       canWrite || ["sales", "purchase", "maintenance"].includes(session.role);
+
   const showProposal = (v: Row) => {
     setProposal(v);
     go("Rescheduling");
   };
+
   const newPlan = () =>
     run("Optimizing the production plan", async () =>
       showProposal(await post("/plan")),
     );
+
   const inspectOrder = (id: string) =>
     run("Reading schedule evidence", async () => {
       const reasons = await api(
@@ -188,6 +203,7 @@ export default function App() {
         order: plan?.orders.find((o: Row) => o.id === id),
       });
     });
+
   return (
     <div className="app-shell">
       <aside className={"sidebar " + (mobile ? "mobile-open" : "")}>
@@ -199,16 +215,14 @@ export default function App() {
             go("Dashboard");
           }}
         >
-          <span className="brand-symbol">
-            p<span />
-          </span>
-          <span>
-            ProductionSaathi
-          </span>
+          <div className="brand-logo-wrap">
+            <McciaLogo height={20} />
+          </div>
+          <span className="brand-title">ProductionSaathi</span>
         </a>
         <div className="workspace">
           <div className="workspace-icon">
-            <Factory size={19} />
+            <Factory size={18} />
           </div>
           <div>
             <strong>{f?.settings.plant_name || "Factory workspace"}</strong>
@@ -231,7 +245,7 @@ export default function App() {
                     aria-current={page === label ? "page" : undefined}
                   >
                     <Icon
-                      size={19}
+                      size={18}
                       weight={page === label ? "fill" : "regular"}
                     />
                     <span>{label}</span>
@@ -245,7 +259,7 @@ export default function App() {
         </nav>
         <div className="sidebar-footer">
           <div className="studio-mark">
-            <ShieldCheck size={19} />
+            <ShieldCheck size={18} />
             <div>
               MCCIA <strong>AI Applied Studio</strong>
             </div>
@@ -279,6 +293,7 @@ export default function App() {
           </div>
         </div>
       </aside>
+
       <div className="main-shell">
         <header className="topbar">
           <div className="crumb">
@@ -287,7 +302,7 @@ export default function App() {
               onClick={() => setMobile(!mobile)}
               aria-label="Toggle navigation"
             >
-              <List size={24} />
+              <List size={22} />
             </button>
             <span>Workspace</span>
             <span className="slash">/</span>
@@ -303,7 +318,7 @@ export default function App() {
               aria-label="View delivery alerts"
               onClick={() => go("Bottlenecks")}
             >
-              <Bell size={21} />
+              <Bell size={20} />
               {plan?.orders.some((o: Row) => o.status !== "ON TIME") && <i />}
             </button>
             <span className="avatar small">
@@ -311,6 +326,7 @@ export default function App() {
             </span>
           </div>
         </header>
+
         {session.demo && (
           <div className="demo-strip">
             <span>
@@ -322,6 +338,7 @@ export default function App() {
             </button>
           </div>
         )}
+
         <main>
           <div className="page-heading">
             <div>
@@ -346,7 +363,7 @@ export default function App() {
                 <>
                   {plan && (
                     <span className="date-chip">
-                      <CalendarBlank size={17} />
+                      <CalendarBlank size={16} />
                       {fmt(plan.base)} · Planning week
                     </span>
                   )}
@@ -355,19 +372,20 @@ export default function App() {
                       className="primary"
                       onClick={() => go("Promise Checker")}
                     >
-                      <Target size={18} />
-                      Check a promise <ArrowRight size={17} />
+                      <Target size={17} />
+                      Check a promise <ArrowRight size={16} />
                     </button>
                   )}
                 </>
               ) : page === "Production Plan" && canWrite ? (
                 <button className="primary" disabled={!!busy} onClick={newPlan}>
-                  <ArrowsClockwise size={18} />
+                  <ArrowsClockwise size={17} />
                   Build proposed plan
                 </button>
               ) : null}
             </div>
           </div>
+
           {error && (
             <div role="alert" className="message error">
               <Warning size={20} />
@@ -377,12 +395,14 @@ export default function App() {
               </button>
             </div>
           )}
+
           {notice && (
             <div role="status" className="message success">
               <CheckCircle size={20} />
               {notice}
             </div>
           )}
+
           {busy && (
             <div role="status" className="message working">
               <span className="spinner" />
@@ -391,6 +411,7 @@ export default function App() {
               </span>
             </div>
           )}
+
           {data?.pending_master_changes && (
             <div className="message working">
               <GitBranch size={19} />
@@ -401,6 +422,7 @@ export default function App() {
               </span>
             </div>
           )}
+
           {!data ? (
             <Empty
               title="Workspace unavailable"
@@ -552,11 +574,12 @@ export default function App() {
             </span>
             <span>
               <ShieldCheck size={13} />
-              Deterministic planning · Explainable decisions
+              Deterministic planning · Explainable decisions · MCCIA
             </span>
           </footer>
         </main>
       </div>
+
       {inspect && (
         <Modal
           title={inspect.title || inspect.operation || "Operation details"}
@@ -606,6 +629,7 @@ export default function App() {
     </div>
   );
 }
+
 function Login({
   onLogin,
   busy,
@@ -618,6 +642,7 @@ function Login({
   const [username, setUsername] = useState("manager"),
     [password, setPassword] = useState(""),
     [demo, setDemo] = useState(false);
+
   useEffect(() => {
     api("/health")
       .then((r) => {
@@ -626,17 +651,18 @@ function Login({
       })
       .catch(() => {});
   }, []);
+
   return (
     <div className="login-page">
       <div className="login-story">
         <div className="brand">
-          <span className="brand-symbol">
-            p<span />
-          </span>
-          ProductionSaathi
+          <div className="brand-logo-wrap">
+            <McciaLogo height={26} />
+          </div>
+          <span className="brand-title">ProductionSaathi</span>
         </div>
         <div>
-          <span className="eyebrow">An MCCIA AI Applied Studio application</span>
+          <span className="eyebrow">MCCIA AI APPLIED STUDIO</span>
           <h1>
             Plan production.
             <br />
@@ -653,13 +679,13 @@ function Login({
           </div>
         </div>
         <span className="fine-print">
-          Production planning · Delivery assurance · Dynamic rescheduling
+          MCCIA Manufacturing Intelligence · Pune, India
         </span>
       </div>
       <div className="login-form">
-        <span className="login-logo">
-          <Factory size={30} />
-        </span>
+        <div className="login-logo-mccia">
+          <McciaLogo height={34} />
+        </div>
         <h2>Your planning workspace</h2>
         <p>Sign in to see what your factory can deliver.</p>
         <form
