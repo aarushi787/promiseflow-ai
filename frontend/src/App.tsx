@@ -32,7 +32,7 @@ import { Dashboard, Bottlenecks, Gantt, OperationsTable } from "./planning";
 import { PromiseChecker, Simulator, Versions } from "./decisions";
 import { Orders, MasterData, Reports, Imports, Settings } from "./masters";
 import { ShopFloor } from "./execution";
-import { BrandLogo, BrandIcon } from "./BrandLogo";
+import { McciaLogo } from "./McciaLogo";
 import "./App.css";
 
 const navigation = [
@@ -146,8 +146,8 @@ export default function App() {
   if (loading)
     return (
       <div className="boot">
-        <div style={{ marginBottom: "18px" }}>
-          <BrandIcon size={48} />
+        <div className="brand-logo-wrap" style={{ padding: "10px 18px", marginBottom: "18px" }}>
+          <McciaLogo height={36} />
         </div>
         <h2>Opening your planning workspace</h2>
         <p>Loading the approved production plan…</p>
@@ -215,12 +215,13 @@ export default function App() {
             go("Dashboard");
           }}
         >
-          <BrandLogo
-            size={34}
-            title="PromiseFlow"
-            subtitle="ProductionSaathi"
-            showAiBadge
-          />
+          <div className="brand-logo-wrap">
+            <McciaLogo height={20} />
+          </div>
+          <div className="brand-text">
+            <span className="brand-title">ProductionSaathi</span>
+            <span className="brand-subtitle">MCCIA AI Studio</span>
+          </div>
         </a>
         <div className="workspace">
           <div className="workspace-icon">
@@ -658,12 +659,13 @@ function Login({
     <div className="login-page">
       <div className="login-story">
         <div className="brand">
-          <BrandLogo
-            size={38}
-            title="PromiseFlow"
-            subtitle="MCCIA Manufacturing Intelligence"
-            showAiBadge
-          />
+          <div className="brand-logo-wrap" style={{ padding: "7px 14px" }}>
+            <McciaLogo height={26} />
+          </div>
+          <div className="brand-text">
+            <span className="brand-title" style={{ fontSize: "16px" }}>ProductionSaathi</span>
+            <span className="brand-subtitle">MCCIA Manufacturing Intelligence</span>
+          </div>
         </div>
         <div>
           <span className="eyebrow">MCCIA AI APPLIED STUDIO</span>
@@ -687,8 +689,8 @@ function Login({
         </span>
       </div>
       <div className="login-form">
-        <div className="login-logo-brand" style={{ marginBottom: "20px" }}>
-          <BrandIcon size={44} />
+        <div className="brand-logo-wrap" style={{ display: "inline-flex", marginBottom: "20px", padding: "8px 16px", border: "1px solid #e2e8f0" }}>
+          <McciaLogo height={32} />
         </div>
         <h2>Your planning workspace</h2>
         <p>Sign in to see what your factory can deliver.</p>
