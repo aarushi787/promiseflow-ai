@@ -25,8 +25,10 @@ Set `PROMISEFLOW_MODE` to match the database. The migrated sample database is **
 
 ## Runtime boundary
 
-The current planner uses a single-process thread worker after returning a queued-job response, process-local locks/rate limits, and startup cleanup of unfinished jobs. Autoscaled or short-lived function instances do not satisfy that execution contract: jobs may be interrupted and one instance can mark another instance's work interrupted. Supabase persistence alone does not fix this. Do not treat a successful Vercel build or login as validation of scheduling on serverless functions.
+On Vercel (detected through the `VERCEL` environment variable) planning jobs run **inside the submitting request** instead of a background thread, because a function instance can be frozen as soon as it responds. `POST /api/jobs` still returns 202 with the job id, but the job is already `COMPLETED` or `FAILED`; the interface's polling picks it up on the first check. The solver's search budget (0.3 deterministic seconds, 30 s wall cap) fits within the function `maxDuration` of 60 s set in `vercel.json`.
 
-For the complete application, deploy the existing Docker image on a persistent Python service with one API worker and Supabase storage. A Vercel frontend can proxy `/api` to that service once its HTTPS address is available. Supporting the full planner directly on Vercel requires a durable external worker and coordinated job ownership before production acceptance.
+- A cold start only marks jobs `INTERRUPTED` when they are more than 10 minutes old, so a new instance cannot cancel another instance's running request.
+- SQLite is refused on Vercel; `PROMISEFLOW_DATABASE_URL` must point at PostgreSQL (Supabase).
+- Login rate limits and the "one solve at a time" lock are per instance. Concurrent solves on different instances are safe because activation checks data revisions, but heavy simultaneous use is better served by the Docker deployment with one worker.
 
 After deployment, verify `/api/health` reports PostgreSQL, login returns JSON, the saved active plan is present, and the supported worker can complete and publish a sandbox scenario. A frontend-only page is not a working backend deployment.

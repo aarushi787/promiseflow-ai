@@ -118,6 +118,10 @@ class Database:
             )
         )
         self.postgres = configured.startswith(("postgresql://", "postgres://"))
+        if path is None and not self.postgres and os.environ.get("VERCEL"):
+            raise ValueError(
+                "Vercel has no persistent disk; set PROMISEFLOW_DATABASE_URL to a PostgreSQL URI"
+            )
         if "://" in configured and not self.postgres:
             raise ValueError(
                 "Use a PostgreSQL connection string, not a Supabase API URL"

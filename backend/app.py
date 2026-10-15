@@ -8,7 +8,7 @@ import threading
 import time
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 from fastapi import (
@@ -55,6 +55,8 @@ SOLVER = CpSatProvider()
 solve_lock = threading.Lock()
 login_attempts = defaultdict(deque)
 DEMO = os.environ.get("PROMISEFLOW_MODE", "demo") == "demo"
+# Serverless instances can be frozen after responding, so planning runs inline.
+SERVERLESS = bool(os.environ.get("VERCEL"))
 ROLES = [
     "planner",
     "sales",
@@ -92,7 +94,7 @@ def planning_epoch(factory, active):
 
 def create_app(db_path=None, *, db_schema=None):
     store = Store(db_path, schema=db_schema)
-    jobs = Jobs(store)
+    jobs = Jobs(store, inline=SERVERLESS)
 
     def evaluate(factory, base, **kwargs):
         with store.connect() as db:
@@ -143,9 +145,16 @@ def create_app(db_path=None, *, db_schema=None):
                         (role, role, password_hash(password)),
                     )
         with store.connect() as db:
+            # Concurrent serverless instances share the database, so a cold start
+            # only reclaims jobs that have outlived any possible request.
+            cutoff = (
+                (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat()
+                if SERVERLESS
+                else "9999"
+            )
             db.execute(
-                "UPDATE solve_jobs SET status='INTERRUPTED', error='Service restarted; submit again', updated_at=? WHERE status IN ('QUEUED','RUNNING')",
-                (now(),),
+                "UPDATE solve_jobs SET status='INTERRUPTED', error='Service restarted; submit again', updated_at=? WHERE status IN ('QUEUED','RUNNING') AND updated_at < ?",
+                (now(), cutoff),
             )
         if not store.load():
             factory = (

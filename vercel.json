@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "backend/app.py": {
-      "includeFiles": "backend/certs/supabase-ca.crt"
+      "maxDuration": 60,
+      "includeFiles": "{backend/certs/supabase-ca.crt,frontend/dist/**}"
     }
   }
 }

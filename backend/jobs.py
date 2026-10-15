@@ -1,4 +1,10 @@
-"""Durable statuses for a bounded, single-process planning worker."""
+"""Durable statuses for a bounded, single-process planning worker.
+
+With ``inline=True`` (serverless hosts such as Vercel) the job runs inside the
+submitting request, because a function instance may be frozen or discarded as
+soon as its response is sent. The solver's bounded search budget keeps this
+within a single request.
+"""
 
 from concurrent.futures import ThreadPoolExecutor
 import json
@@ -7,8 +13,9 @@ from .store import now, dumps, Conflict
 
 
 class Jobs:
-    def __init__(self, store):
+    def __init__(self, store, inline=False):
         self.store = store
+        self.inline = inline
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="planning")
 
     def submit(self, actor, kind, payload, work):
@@ -40,6 +47,13 @@ class Jobs:
                     None,
                 ),
             )
+        if self.inline:
+            self._run(jid, revision, work)
+            with self.store.connect() as db:
+                status = db.execute(
+                    "SELECT status FROM solve_jobs WHERE id=?", (jid,)
+                ).fetchone()[0]
+            return {"job_id": jid, "status": status}
         self.executor.submit(self._run, jid, revision, work)
         return {"job_id": jid, "status": "QUEUED"}
 
